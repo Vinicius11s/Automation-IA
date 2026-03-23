@@ -1,13 +1,30 @@
 "use client";
 
+import { useEffect, useMemo } from "react";
 import { useSupportOpsStore } from "@/store/supportops";
-import { formatScanTime } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, RefreshCw } from "lucide-react";
 
 export function Dashboard() {
-  const { briefing, isLoading, lastScan, triggerScan } = useSupportOpsStore();
-  const { summary, priorities, claude_analysis } = briefing;
+  const briefing = useSupportOpsStore((state) => state.briefing);
+  const tickets = useSupportOpsStore((state) => state.tickets);
+  const fetchBriefing = useSupportOpsStore((state) => state.fetchBriefing);
+  const ticketList = useMemo(() => Object.values(tickets), [tickets]);
+
+  useEffect(() => {
+    void fetchBriefing();
+  }, [fetchBriefing]);
+
+  // Always derive counts from actual tickets — briefing.summary can be stale
+  const summary = {
+    total: ticketList.length,
+    urgent: ticketList.filter((t) => t.priority === "urgent").length,
+    academy: ticketList.filter((t) => t.source === "academy").length,
+    zendesk: ticketList.filter((t) => t.source === "zendesk").length,
+    pending_licenses: ticketList.filter((t) => t.category === "licenca").length,
+  };
+
+  const priorities = briefing?.priorities ?? [];
+  const claude_analysis = briefing?.claude_analysis ?? "Sem análise gerada ainda.";
 
   return (
     <aside
@@ -81,32 +98,6 @@ export function Dashboard() {
           </section>
         </div>
       </ScrollArea>
-
-      {/* Scan footer */}
-      <div className="px-5 py-4 border-t border-[#1a1a1a] flex flex-col gap-2 shrink-0">
-        <button
-          onClick={triggerScan}
-          disabled={isLoading}
-          aria-label="Rodar scan agora"
-          className="w-full flex items-center justify-center gap-2 rounded-md
-            px-3 py-2 text-xs text-[#ededed]
-            bg-[#111111] border border-[#262626]
-            hover:bg-[#161616] hover:border-[#333333]
-            disabled:opacity-40 disabled:cursor-not-allowed
-            transition-colors duration-100
-            focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#262626]"
-        >
-          {isLoading ? (
-            <Loader2 className="size-3 animate-spin" aria-hidden="true" />
-          ) : (
-            <RefreshCw className="size-3" aria-hidden="true" />
-          )}
-          {isLoading ? "Coletando…" : "Rodar scan"}
-        </button>
-        <p className="text-center text-[10px] text-[#525252] font-mono tabular-nums">
-          último scan {formatScanTime(lastScan)}
-        </p>
-      </div>
     </aside>
   );
 }

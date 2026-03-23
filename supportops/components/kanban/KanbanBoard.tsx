@@ -3,28 +3,31 @@
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { useSupportOpsStore } from "@/store/supportops";
 import { KanbanColumn } from "./KanbanColumn";
-import { LicenseModal } from "@/components/modals/LicenseModal";
-import { ResolveModal } from "@/components/modals/ResolveModal";
-import type { KanbanColumnId } from "@/types";
+import { MoveConfirmationModal } from "./MoveConfirmationModal";
+import { useMoveTicket } from "@/hooks/useMoveTicket";
+import { useColumns } from "@/hooks/useColumns";
+import { useTickets } from "@/hooks/useTickets";
 
 export function KanbanBoard() {
-  const { columns, tickets, moveTicket, reorderInColumn } =
-    useSupportOpsStore();
+  const { columns, tickets, askConfirmationMove } = useSupportOpsStore();
+  const { moveTicket } = useMoveTicket();
+  useColumns();
+  useTickets();
 
-  function onDragEnd(result: DropResult) {
-    const { source, destination, draggableId } = result;
+  async function onDragEnd(result: DropResult) {
+    const { destination, draggableId } = result;
     if (!destination) return;
 
-    const fromCol = source.droppableId as KanbanColumnId;
-    const toCol = destination.droppableId as KanbanColumnId;
+    const toCol = destination.droppableId;
 
-    if (fromCol === toCol) {
-      // Reorder within same column
-      reorderInColumn(fromCol, source.index, destination.index);
-      return;
+    const targetColumn = columns.find((column) => column.id === toCol);
+    if (!targetColumn) return;
+
+    if (targetColumn.confirmation_enabled) {
+      askConfirmationMove(draggableId, toCol, destination.index);
+    } else {
+      await moveTicket(draggableId, toCol, destination.index);
     }
-
-    moveTicket(draggableId, fromCol, toCol, destination.index);
   }
 
   return (
@@ -42,9 +45,7 @@ export function KanbanBoard() {
         </div>
       </DragDropContext>
 
-      {/* Automation modals */}
-      <LicenseModal />
-      <ResolveModal />
+      <MoveConfirmationModal />
     </>
   );
 }

@@ -18,8 +18,8 @@
 
   /* Text */
   --color-text-primary:   #ededed;
-  --color-text-secondary: #737373;
-  --color-text-tertiary:  #525252;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary:  #71717a;
   --color-text-accent:    #ffffff;
 
   /* Semantic */
@@ -64,7 +64,7 @@
     --secondary: #161616;
     --secondary-foreground: #ededed;
     --muted: #1c1c1c;
-    --muted-foreground: #737373;
+    --muted-foreground: #a1a1aa;
     --accent: #161616;
     --accent-foreground: #ededed;
     --destructive: #ef4444;
@@ -117,7 +117,7 @@
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #525252;
+    color: #71717a;
   }
 
   /* Ticket card */

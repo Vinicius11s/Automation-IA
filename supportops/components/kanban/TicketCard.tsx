@@ -5,7 +5,9 @@ import { Draggable } from "@hello-pangea/dnd";
 import type { Ticket } from "@/types";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { categoryLabel, sourceLabel } from "@/lib/utils";
-import { AssignModal } from "@/components/modals/AssignModal";
+import { TicketSheet } from "./TicketSheet";
+import { useSupportOpsStore } from "@/store/supportops";
+import { Trash2, Zap } from "lucide-react";
 
 interface Props {
   ticket: Ticket;
@@ -48,7 +50,22 @@ function PriorityDot({ priority }: { priority: Ticket["priority"] }) {
 }
 
 export function TicketCard({ ticket, index }: Props) {
-  const [assignOpen, setAssignOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [firing, setFiring] = useState(false);
+  const updateTicket = useSupportOpsStore((state) => state.updateTicket);
+  const deleteTicket = useSupportOpsStore((state) => state.deleteTicket);
+
+  async function handleFireWebhook(event: React.MouseEvent) {
+    event.stopPropagation();
+    setFiring(true);
+    try {
+      const res = await fetch(`/api/tickets/${ticket.id}/webhook`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) alert(data.error ?? "Erro ao acionar automação");
+    } finally {
+      setFiring(false);
+    }
+  }
 
   return (
     <>
@@ -60,16 +77,19 @@ export function TicketCard({ ticket, index }: Props) {
             {...provided.dragHandleProps}
             data-dragging={snapshot.isDragging}
             className="ticket-card rounded-md border border-[#1a1a1a] bg-[#111111] p-4 cursor-grab active:cursor-grabbing select-none"
+            onDoubleClick={() => setEditOpen(true)}
           >
-            {/* Row 1: source + id + priority dot */}
+            {/* Row 1: source + external_id + priority dot */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-[10px] font-mono text-[#525252] shrink-0">
-                  {ticket.id}
-                </span>
                 <span className="text-[10px] text-[#525252] truncate">
                   {sourceLabel(ticket.source)}
                 </span>
+                {ticket.external_id && (
+                  <span className="text-[10px] font-mono text-[#525252] shrink-0">
+                    #{ticket.external_id}
+                  </span>
+                )}
               </div>
               <PriorityDot priority={ticket.priority} />
             </div>
@@ -89,35 +109,52 @@ export function TicketCard({ ticket, index }: Props) {
               </span>
             </div>
 
-            {/* Row 4: category + assignee */}
+            {/* Row 4: category + actions */}
             <div className="flex items-center justify-between">
               <span className="text-[10px] text-[#525252]">
                 {categoryLabel(ticket.category)}
               </span>
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setAssignOpen(true);
-                }}
-                aria-label={
-                  ticket.assignee
-                    ? `Atribuído a ${ticket.assignee}`
-                    : "Atribuir ticket"
-                }
-                className="text-[10px] text-[#525252] hover:text-[#737373] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#262626] rounded"
-              >
-                {ticket.assignee ? ticket.assignee : "Atribuir"}
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={handleFireWebhook}
+                  disabled={firing}
+                  className="flex items-center gap-1 rounded border border-[#1a2a1a] px-2 py-1 text-[10px] text-[#4ade80] hover:bg-[#0f1f0f] disabled:opacity-40 transition-colors"
+                  title="Acionar automação desta coluna"
+                >
+                  <Zap size={10} />
+                  {firing ? "..." : "Automação"}
+                </button>
+                <button
+                  onClick={async (event) => {
+                    event.stopPropagation();
+                    const label = ticket.external_id ?? ticket.id;
+                    const confirmed = window.confirm(
+                      `Excluir ticket ${label}? Esta ação não pode ser desfeita.`
+                    );
+                    if (confirmed) {
+                      await deleteTicket(ticket.id);
+                    }
+                  }}
+                  className="flex items-center gap-1 rounded border border-[#3b1010] px-2 py-1 text-[10px] text-[#ef4444] hover:bg-[#3b1010] hover:text-[#f87171] transition-colors"
+                >
+                  <Trash2 size={10} />
+                  Excluir
+                </button>
+              </div>
             </div>
           </div>
         )}
       </Draggable>
 
-      <AssignModal
-        open={assignOpen}
-        onClose={() => setAssignOpen(false)}
-        ticket={ticket}
+      <TicketSheet
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        initial={ticket}
+        title={`Editar ticket ${ticket.external_id ?? ticket.id}`}
+        onSubmit={async (payload) => {
+          await updateTicket(ticket.id, payload);
+        }}
       />
     </>
   );

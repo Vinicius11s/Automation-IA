@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx skills:*)",
+      "Bash(curl:*)",
+      "Bash(node scripts/morning.mjs --input ./supportops-data/input-raw.json)"
+    ]
+  }
+}
