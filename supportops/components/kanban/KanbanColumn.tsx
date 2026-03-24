@@ -1,20 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Droppable } from "@hello-pangea/dnd";
+import { Droppable, type DraggableProvided } from "@hello-pangea/dnd";
 import type { KanbanColumn as KanbanColumnType, Ticket } from "@/types";
 import { TicketCard } from "./TicketCard";
 import { cn, indicatorColorMap } from "@/lib/utils";
 import { CreateColumnSheet } from "./CreateColumnSheet";
 import { TicketSheet } from "./TicketSheet";
 import { useSupportOpsStore } from "@/store/supportops";
+import { GripVertical } from "lucide-react";
 
 interface Props {
   column: KanbanColumnType;
   tickets: Ticket[];
+  draggableProvided: DraggableProvided;
 }
 
-export function KanbanColumn({ column, tickets }: Props) {
+export function KanbanColumn({ column, tickets, draggableProvided }: Props) {
   const [showEdit, setShowEdit] = useState(false);
   const [showCreateTicket, setShowCreateTicket] = useState(false);
   const updateColumn = useSupportOpsStore((state) => state.updateColumn);
@@ -22,22 +24,33 @@ export function KanbanColumn({ column, tickets }: Props) {
   const createTicket = useSupportOpsStore((state) => state.createTicket);
 
   return (
-    <div className="flex flex-col w-72 shrink-0">
+    <div
+      ref={draggableProvided.innerRef}
+      {...draggableProvided.draggableProps}
+      className="flex flex-col w-72 shrink-0"
+    >
       {/* Column header */}
       <div className="px-1 pb-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          {/* Drag handle */}
+          <span
+            {...draggableProvided.dragHandleProps}
+            className="text-[#333333] hover:text-[#525252] cursor-grab active:cursor-grabbing transition-colors shrink-0"
+          >
+            <GripVertical size={12} />
+          </span>
           <span
             className="size-2 rounded-full shrink-0"
             style={{ backgroundColor: indicatorColorMap[column.indicator_color] }}
           />
-          <span className="text-xs font-medium text-[#ededed] tracking-wide">
+          <span className="text-xs font-medium text-[#ededed] tracking-wide truncate">
             {column.title}
           </span>
-          <span className="text-[10px] font-mono text-[#525252] tabular-nums">
+          <span className="text-[10px] font-mono text-[#525252] tabular-nums shrink-0">
             {tickets.length}
           </span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <button
             className="rounded border border-[#262626] px-1.5 py-0.5 text-[10px] text-[#a1a1aa]"
             onClick={() => setShowCreateTicket(true)}

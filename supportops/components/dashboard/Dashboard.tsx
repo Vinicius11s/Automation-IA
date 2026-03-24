@@ -34,7 +34,7 @@ export function Dashboard() {
       {/* Logo / title */}
       <div className="px-5 h-12 flex items-center border-b border-[#1a1a1a] shrink-0">
         <span className="text-sm font-semibold text-[#ededed] tracking-tight">
-          SupportOps
+          Visão Geral
         </span>
       </div>
 

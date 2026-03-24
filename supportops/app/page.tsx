@@ -9,7 +9,7 @@ export default function PainelPage() {
         {/* Header */}
         <div>
           <h1 className="text-xl font-semibold text-[#ededed] tracking-tight">
-            SupportOps
+            RaioX Preditivo Tecnologia
           </h1>
           <p className="text-sm text-[#737373] mt-1">
             Painel interno de automação

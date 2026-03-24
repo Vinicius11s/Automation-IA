@@ -123,17 +123,15 @@ Para cada ticket, determine:
    - high: problema ativo, espera > 2h
    - normal: dúvida simples, pedido padrão
 
-3. suggested_response: resposta pronta em português brasileiro, tom profissional e amigável. Se for FAQ, use a resposta da base de conhecimento.
+3. tags: array de 2-4 tags descritivas
 
-4. tags: array de 2-4 tags descritivas
+4. time_open: tempo desde raw_date até agora (ex: "2h 30m", "1d 4h")
 
-5. time_open: tempo desde raw_date até agora (ex: "2h 30m", "1d 4h")
+5. external_id: use APENAS os números do campo raw_id (ex: "725295")
 
-6. external_id: use APENAS os números do campo raw_id (ex: "725295")
+6. suggested_column: título exato de uma das colunas disponíveis acima, ou "Triagem" se não tiver certeza
 
-7. suggested_column: título exato de uma das colunas disponíveis acima, ou "Triagem" se não tiver certeza
-
-8. confidence: número de 0.0 a 1.0 indicando certeza na atribuição de coluna
+7. confidence: número de 0.0 a 1.0 indicando certeza na atribuição de coluna
    - 0.9+: certeza alta (ticket vai direto para a coluna sugerida)
    - 0.8-0.89: certeza boa
    - < 0.8: incerto (ticket vai para Triagem para revisão manual)
@@ -165,7 +163,6 @@ Retorne APENAS JSON válido neste formato:
       "priority": "...",
       "category": "...",
       "time_open": "...",
-      "suggested_response": "...",
       "tags": [...],
       "platform": "...",
       "suggested_column": "Liberar Licença",

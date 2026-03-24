@@ -7,6 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { categoryLabel, sourceLabel } from "@/lib/utils";
 import { TicketSheet } from "./TicketSheet";
 import { useSupportOpsStore } from "@/store/supportops";
+import { CancelamentoModal } from "@/components/modals/CancelamentoModal";
 import { Trash2, Zap } from "lucide-react";
 
 interface Props {
@@ -52,11 +53,23 @@ function PriorityDot({ priority }: { priority: Ticket["priority"] }) {
 export function TicketCard({ ticket, index }: Props) {
   const [editOpen, setEditOpen] = useState(false);
   const [firing, setFiring] = useState(false);
+  const [cancelamentoOpen, setCancelamentoOpen] = useState(false);
   const updateTicket = useSupportOpsStore((state) => state.updateTicket);
   const deleteTicket = useSupportOpsStore((state) => state.deleteTicket);
+  const columns = useSupportOpsStore((state) => state.columns);
+
+  const currentColumn = columns.find((col) => col.id === ticket.column_id);
+  const isCancelamentoColumn =
+    currentColumn?.title?.toLowerCase().includes("cancelamento") ?? false;
 
   async function handleFireWebhook(event: React.MouseEvent) {
     event.stopPropagation();
+
+    if (isCancelamentoColumn) {
+      setCancelamentoOpen(true);
+      return;
+    }
+
     setFiring(true);
     try {
       const res = await fetch(`/api/tickets/${ticket.id}/webhook`, { method: "POST" });
@@ -155,6 +168,12 @@ export function TicketCard({ ticket, index }: Props) {
         onSubmit={async (payload) => {
           await updateTicket(ticket.id, payload);
         }}
+      />
+
+      <CancelamentoModal
+        open={cancelamentoOpen}
+        onClose={() => setCancelamentoOpen(false)}
+        ticket={ticket}
       />
     </>
   );

@@ -4,6 +4,7 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { AppNav } from "@/components/navigation/AppNav";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -18,7 +19,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "SupportOps",
+  title: "RaioX Preditivo Tecnologia",
   description: "Painel automatizado de triagem e gestão de tickets de suporte",
 };
 
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-[#0a0a0a] text-[#ededed]`}
       >
         <TooltipProvider>
+          <AuthProvider>
           <div className="flex h-screen overflow-hidden bg-[#0a0a0a]">
             <AppNav />
             {children}
@@ -46,6 +48,7 @@ export default function RootLayout({
               },
             }}
           />
+          </AuthProvider>
         </TooltipProvider>
       </body>
     </html>

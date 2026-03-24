@@ -88,7 +88,6 @@ export async function POST(request: NextRequest) {
               column_id: defaultColumnId,
               description: ticket.description ?? null,
               time_open: ticket.time_open ?? null,
-              suggested_response: ticket.suggested_response ?? null,
               updated_at: new Date().toISOString(),
             })
             .eq("id", found.id);
@@ -109,7 +108,6 @@ export async function POST(request: NextRequest) {
             priority: ticket.priority,
             category: ticket.category,
             time_open: ticket.time_open ?? null,
-            suggested_response: ticket.suggested_response ?? null,
             tags: ticket.tags ?? [],
             source: ticket.source,
             updated_at: new Date().toISOString(),
@@ -136,7 +134,6 @@ export async function POST(request: NextRequest) {
           priority: ticket.priority,
           category: ticket.category,
           time_open: ticket.time_open ?? null,
-          suggested_response: ticket.suggested_response ?? null,
           tags: ticket.tags ?? [],
           column_id: aiColumnId,
           department,

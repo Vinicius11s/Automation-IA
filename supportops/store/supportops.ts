@@ -49,6 +49,7 @@ interface StoreState {
   moveTicketOptimistic: (ticketId: string, targetColumnId: string, position: number) => Promise<{ webhookFired: boolean; webhookSuccess: boolean }>;
   askConfirmationMove: (ticketId: string, targetColumnId: string, position: number) => void;
   clearPendingMove: () => void;
+  reorderColumns: (sourceIndex: number, destinationIndex: number) => Promise<void>;
 }
 
 export const useSupportOpsStore = create<StoreState>((set, get) => ({
@@ -199,6 +200,13 @@ export const useSupportOpsStore = create<StoreState>((set, get) => ({
       const payload = await response.json();
       if (!response.ok) throw new Error("Falha ao mover ticket");
 
+      // Apply server-returned ticket data (e.g. suggested_response from Chatbase)
+      if (payload.ticket) {
+        set((state) => ({
+          tickets: { ...state.tickets, [ticketId]: { ...state.tickets[ticketId], ...payload.ticket } },
+        }));
+      }
+
       return {
         webhookFired: Boolean(payload.webhookFired),
         webhookSuccess: Boolean(payload.webhookSuccess),
@@ -217,4 +225,26 @@ export const useSupportOpsStore = create<StoreState>((set, get) => ({
   },
 
   clearPendingMove: () => set({ pendingMove: null }),
+
+  reorderColumns: async (sourceIndex, destinationIndex) => {
+    // Optimistic reorder
+    set((state) => {
+      const cols = [...state.columns];
+      const [moved] = cols.splice(sourceIndex, 1);
+      cols.splice(destinationIndex, 0, moved);
+      return { columns: cols.map((col, i) => ({ ...col, position: i })) };
+    });
+
+    // Persist new positions
+    const cols = get().columns;
+    await Promise.all(
+      cols.map((col, i) =>
+        fetch(`/api/columns/${col.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ position: i }),
+        })
+      )
+    );
+  },
 }));
