@@ -32,11 +32,11 @@ export function UserInfo() {
 
   return (
     <div className="px-3 py-3 border-t border-[#1a1a1a]">
-      <div className="flex flex-col gap-0.5 mb-2 px-1">
-        <span className="text-xs font-medium text-[#ededed] truncate">
+      <div className="flex flex-col gap-0.5 mb-2.5 px-1">
+        <span className="text-sm font-medium text-[#ededed] truncate">
           {profile.full_name}
         </span>
-        <span className="text-[10px] text-[#525252]">
+        <span className="text-xs text-[#525252]">
           {DEPT_LABELS[profile.department] ?? profile.department}
           {" · "}
           {ROLE_LABELS[profile.role] ?? profile.role}
@@ -44,7 +44,7 @@ export function UserInfo() {
       </div>
       <button
         onClick={handleSignOut}
-        className="w-full rounded-md border border-[#1a1a1a] px-3 py-1.5 text-[11px] text-[#737373] hover:text-[#a1a1aa] hover:border-[#262626] transition-colors text-left"
+        className="w-full rounded-md border border-[#1a1a1a] px-3 py-2 text-xs text-[#737373] hover:text-[#a1a1aa] hover:border-[#262626] transition-colors text-left"
       >
         Sair
       </button>

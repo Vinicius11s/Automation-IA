@@ -33,7 +33,13 @@ export function CreateColumnSheet({ open, onClose, onSubmit, initial, title }: P
     indicator_color: initial?.indicator_color ?? "gray",
   });
 
+  const isCancelamentoOrReembolso = useMemo(() => {
+    const candidate = (form.title ?? initial?.title ?? "").toLowerCase();
+    return candidate.includes("cancelamento") || candidate.includes("reembolso");
+  }, [form.title, initial?.title]);
+
   const isUrlValid = useMemo(() => {
+    if (isCancelamentoOrReembolso) return true;
     if (!form.webhook_url) return true;
     try {
       new URL(form.webhook_url);
@@ -41,7 +47,7 @@ export function CreateColumnSheet({ open, onClose, onSubmit, initial, title }: P
     } catch {
       return false;
     }
-  }, [form.webhook_url]);
+  }, [form.webhook_url, isCancelamentoOrReembolso]);
 
   if (!open) return null;
 
@@ -73,14 +79,29 @@ export function CreateColumnSheet({ open, onClose, onSubmit, initial, title }: P
 
           <label className="flex flex-col gap-1">
             <span className="text-[#a1a1aa]">Webhook URL</span>
-            <input
-              className="rounded-md border border-[#262626] bg-[#111111] px-3 py-2 text-[#ededed]"
-              value={form.webhook_url ?? ""}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, webhook_url: event.target.value }))
-              }
-            />
-            {!isUrlValid && <span className="text-[#ef4444]">URL inválida</span>}
+            {isCancelamentoOrReembolso ? (
+              <div className="flex flex-col gap-2">
+                <div className="rounded-md border border-[#1a1a1a] bg-[#0a0a0a] px-3 py-2">
+                  <div className="text-[10px] text-[#a1a1aa]">Webhook 1</div>
+                  <div className="text-[11px] text-[#ededed]">Consulta (configurado no servidor)</div>
+                </div>
+                <div className="rounded-md border border-[#1a1a1a] bg-[#0a0a0a] px-3 py-2">
+                  <div className="text-[10px] text-[#a1a1aa]">Webhook 2</div>
+                  <div className="text-[11px] text-[#ededed]">Finalizar (configurado no servidor)</div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <input
+                  className="rounded-md border border-[#262626] bg-[#111111] px-3 py-2 text-[#ededed]"
+                  value={form.webhook_url ?? ""}
+                  onChange={(event) =>
+                    setForm((prev) => ({ ...prev, webhook_url: event.target.value }))
+                  }
+                />
+                {!isUrlValid && <span className="text-[#ef4444]">URL inválida</span>}
+              </>
+            )}
           </label>
 
           <label className="flex items-center gap-2 text-[#a1a1aa]">
@@ -150,7 +171,13 @@ export function CreateColumnSheet({ open, onClose, onSubmit, initial, title }: P
             className="rounded-md border border-[#262626] bg-[#1c1c1c] px-3 py-2 text-xs text-[#ededed] disabled:opacity-40"
             onClick={async () => {
               setSaving(true);
-              await onSubmit(form);
+              const payload: CreateColumnInput = { ...form };
+              // O fluxo de Cancelamento/Reembolso usa webhooks dedicados (env/endpoints),
+              // então não sobrescrevemos o campo único `webhook_url` ao salvar o sheet.
+              if (isCancelamentoOrReembolso) {
+                delete payload.webhook_url;
+              }
+              await onSubmit(payload);
               setSaving(false);
               onClose();
             }}

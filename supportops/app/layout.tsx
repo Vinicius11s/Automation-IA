@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
-import { AppNav } from "@/components/navigation/AppNav";
+import { ConditionalNav } from "@/components/navigation/ConditionalNav";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 
 const geistSans = localFont({
@@ -34,7 +34,7 @@ export default function RootLayout({
         <TooltipProvider>
           <AuthProvider>
           <div className="flex h-screen overflow-hidden bg-[#0a0a0a]">
-            <AppNav />
+            <ConditionalNav />
             {children}
           </div>
           <Toaster

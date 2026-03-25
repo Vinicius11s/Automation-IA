@@ -89,6 +89,7 @@
 
   html {
     color-scheme: dark;
+    font-size: 118.75%; /* 19px base — escala todo o rem do Tailwind */
   }
 }
 

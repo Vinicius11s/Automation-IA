@@ -3,6 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 
 const PUBLIC_ROUTES = ["/login"];
+const API_ROUTES_PREFIX = "/api/";
+const MFA_CHALLENGE_ROUTE = "/mfa/challenge";
 const DEPARTMENTS = ["suporte", "financeiro", "marketing"];
 
 function isPublicRoute(pathname: string) {
@@ -46,6 +48,9 @@ export async function refreshSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const pathname = request.nextUrl.pathname;
 
+  // Rotas de API — não aplicar RBAC (cada handler gerencia o próprio auth)
+  if (pathname.startsWith(API_ROUTES_PREFIX)) return response;
+
   // Rotas públicas — sem verificação
   if (isPublicRoute(pathname)) {
     // Redirecionar usuário já logado para fora do login
@@ -84,6 +89,23 @@ export async function refreshSession(request: NextRequest) {
   // Usuário inativo
   if (!userActive) {
     return NextResponse.redirect(new URL("/login?error=inactive", request.url));
+  }
+
+  // ── Verificação de MFA (AAL) ──
+  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  const needsMfa = aal?.nextLevel === "aal2" && aal?.currentLevel !== "aal2";
+
+  // Na rota de desafio MFA
+  if (pathname === MFA_CHALLENGE_ROUTE) {
+    // Já completou o MFA → redirecionar para home
+    if (!needsMfa) return NextResponse.redirect(new URL("/", request.url));
+    // Ainda precisa completar → deixar passar (sem RBAC)
+    return response;
+  }
+
+  // Precisa completar MFA → redirecionar para a tela de desafio
+  if (needsMfa) {
+    return NextResponse.redirect(new URL(MFA_CHALLENGE_ROUTE, request.url));
   }
 
   // Governança: acesso total

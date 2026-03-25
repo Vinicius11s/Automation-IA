@@ -1,11 +1,13 @@
-function readEnv(name: string, fallback?: string) {
-  const value = process.env[name] ?? (fallback ? process.env[fallback] : undefined);
-  return value?.trim();
-}
-
 export function getSupabaseEnv() {
-  const url = readEnv("NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_URL");
-  const anonKey = readEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_ANON_KEY");
+  const url = (
+    process.env.NEXT_PUBLIC_SUPABASE_URL ??
+    process.env.SUPABASE_URL
+  )?.trim();
+
+  const anonKey = (
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    process.env.SUPABASE_ANON_KEY
+  )?.trim();
 
   return { url, anonKey };
 }

@@ -38,22 +38,8 @@ export default function LoginPage({
         return;
       }
 
-      // Buscar perfil para redirecionar corretamente
-      const res = await fetch("/api/me");
-      if (!res.ok) {
-        setError("Conta desativada. Entre em contato com o administrador.");
-        await supabase.auth.signOut();
-        return;
-      }
-
-      const { profile } = await res.json();
-
-      if (profile?.role === "governanca") {
-        router.push("/");
-      } else {
-        router.push(`/${profile?.department ?? "suporte"}/kanban`);
-      }
-
+      // Middleware lê o JWT e redireciona para a rota correta por role/dept
+      router.push("/");
       router.refresh();
     } catch {
       setError("Erro de conexão. Tente novamente.");
@@ -63,7 +49,7 @@ export default function LoginPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+    <div className="flex-1 bg-[#0a0a0a] flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
 
         {/* Logo */}

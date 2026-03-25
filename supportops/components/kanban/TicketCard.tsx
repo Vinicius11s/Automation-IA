@@ -9,6 +9,7 @@ import { TicketSheet } from "./TicketSheet";
 import { useSupportOpsStore } from "@/store/supportops";
 import { CancelamentoModal } from "@/components/modals/CancelamentoModal";
 import { Trash2, Zap } from "lucide-react";
+import { toast } from "sonner";
 
 interface Props {
   ticket: Ticket;
@@ -72,9 +73,18 @@ export function TicketCard({ ticket, index }: Props) {
 
     setFiring(true);
     try {
-      const res = await fetch(`/api/tickets/${ticket.id}/webhook`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) alert(data.error ?? "Erro ao acionar automação");
+      const res = await fetch(`/api/tickets/${ticket.id}/webhook`, {
+        method: "POST",
+      });
+      const data = (await res.json().catch(() => null)) as
+        | { error?: string; success?: boolean }
+        | null;
+
+      if (!res.ok) {
+        toast.error(data?.error ?? "Não foi possível acionar a automação agora.");
+      } else {
+        toast.success("Automação disparada com sucesso.");
+      }
     } finally {
       setFiring(false);
     }

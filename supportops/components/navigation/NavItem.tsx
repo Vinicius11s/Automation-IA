@@ -19,8 +19,8 @@ export function NavItem({ href, label, icon, indent = false }: NavItemProps) {
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-2 py-1.5 text-sm transition-colors duration-100 rounded-sm border-l-2",
-        indent ? "text-xs pl-[26px]" : "pl-[10px]",
+        "flex items-center gap-2.5 py-2 text-sm transition-colors duration-100 rounded-sm border-l-2",
+        indent ? "text-xs pl-[30px]" : "pl-[10px]",
         isActive
           ? "bg-[#161616] text-[#ededed] border-[#ededed]"
           : "text-[#737373] hover:text-[#ededed] border-transparent"

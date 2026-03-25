@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npx skills:*)",
       "Bash(curl:*)",
-      "Bash(node scripts/morning.mjs --input ./supportops-data/input-raw.json)"
+      "Bash(node scripts/morning.mjs --input ./supportops-data/input-raw.json)",
+      "mcp__plugin_context-mode_context-mode__ctx_doctor",
+      "mcp__plugin_context-mode_context-mode__ctx_execute"
     ]
   }
 }
