@@ -7,14 +7,25 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export function Dashboard() {
   const briefing = useSupportOpsStore((state) => state.briefing);
   const tickets = useSupportOpsStore((state) => state.tickets);
+  const columns = useSupportOpsStore((state) => state.columns);
   const fetchBriefing = useSupportOpsStore((state) => state.fetchBriefing);
-  const ticketList = useMemo(() => Object.values(tickets), [tickets]);
 
   useEffect(() => {
     void fetchBriefing();
   }, [fetchBriefing]);
 
+  const resolvedColumnIds = useMemo(
+    () => new Set(columns.filter((c) => c.title?.toLowerCase() === "resolvido").map((c) => c.id)),
+    [columns]
+  );
+
   // Always derive counts from actual tickets — briefing.summary can be stale
+  // Exclude tickets in "Resolvido" columns from the overview counts
+  const ticketList = useMemo(
+    () => Object.values(tickets).filter((t) => !resolvedColumnIds.has(t.column_id)),
+    [tickets, resolvedColumnIds]
+  );
+
   const summary = {
     total: ticketList.length,
     urgent: ticketList.filter((t) => t.priority === "urgent").length,

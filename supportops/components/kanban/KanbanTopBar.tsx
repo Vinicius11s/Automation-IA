@@ -9,6 +9,7 @@ export function KanbanTopBar() {
   const [open, setOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const tickets = useSupportOpsStore((state) => state.tickets);
+  const columns = useSupportOpsStore((state) => state.columns);
   const createColumn = useSupportOpsStore((state) => state.createColumn);
   const fetchColumns = useSupportOpsStore((state) => state.fetchColumns);
   const fetchTickets = useSupportOpsStore((state) => state.fetchTickets);
@@ -18,7 +19,16 @@ export function KanbanTopBar() {
     await Promise.all([fetchColumns(), fetchTickets()]);
     setRefreshing(false);
   }
-  const ticketList = useMemo(() => Object.values(tickets), [tickets]);
+
+  const resolvedColumnIds = useMemo(
+    () => new Set(columns.filter((c) => c.title?.toLowerCase() === "resolvido").map((c) => c.id)),
+    [columns]
+  );
+
+  const ticketList = useMemo(
+    () => Object.values(tickets).filter((t) => !resolvedColumnIds.has(t.column_id)),
+    [tickets, resolvedColumnIds]
+  );
   const urgentCount = ticketList.filter((ticket) => ticket.priority === "urgent").length;
   const pendingLicenses = ticketList.filter((ticket) => ticket.category === "licenca").length;
 

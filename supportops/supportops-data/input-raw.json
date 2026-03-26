@@ -1,13 +1,49 @@
 {
   "academy": [
     {
-      "raw_id": "726077",
-      "title": "ativador sato",
-      "description": "xp 2344342",
-      "platform": "Trader Exponencial",
-      "person": "Ademir Monari Pinto",
-      "raw_date": "2026-03-24T20:34:00",
+      "raw_id": "726524",
+      "title": "Dúvida sobre operação",
+      "description": "Tenho uma dúvida no operacional. Reversões acontecem na cor oposta: topo verde limão com fluxo verde e kilzone em cima reverte pra baixo. Fico confuso sobre quando entrar comprado/vendido. Qual timeframe devo usar para scalping de 15 segundos — olho supply/demand no 15s ou no 1 minuto?",
+      "platform": "comboexponencial lancamento.14.09.2025",
+      "person": "Rafael Dutra Batista",
+      "raw_date": "2026-03-26T06:17:00",
+      "department_tag": "5 - Dúvidas Gerais"
+    },
+    {
+      "raw_id": "726481",
+      "title": "ATIVADOR SATO",
+      "description": "NOME: DIVINO RIBAS DA SILVA CPF: 49957732668 E-MAIL: kdribas@gmail.com CODIGO XP:11799611",
+      "platform": "importação base raiox ativa 18.09.2025",
+      "person": "Divino Ribas da Silva",
+      "raw_date": "2026-03-25T23:17:00",
       "department_tag": "1 - Solicitação Licença Profit (TraderExpo)"
+    },
+    {
+      "raw_id": "726439",
+      "title": "Instalação dos indicadores",
+      "description": "Seguem os dados para cadastro dos indicadores: Nome Maurício Passos Ribeiro email mprrj@bol.com.br cpf 02093593742 Codigo Elliot-Warren 1379257 (a licença do Profit Pro aparece assim 169***207)",
+      "platform": "Trader Exponencial",
+      "person": "Mauricio Passos Ribeiro",
+      "raw_date": "2026-03-25T20:56:00",
+      "department_tag": "1 - Solicitação Licença Profit (TraderExpo)"
+    },
+    {
+      "raw_id": "726321",
+      "title": "Instalação dos indicadores",
+      "description": "Codigo Elliot-Warren 1379257 (a licença do Profit Pro aparece assim 169***207)",
+      "platform": "Trader Exponencial",
+      "person": "Mauricio Passos Ribeiro",
+      "raw_date": "2026-03-25T14:45:00",
+      "department_tag": "1 - Solicitação Licença Profit (TraderExpo)"
+    },
+    {
+      "raw_id": "725894",
+      "title": "compra e venda no meta trader",
+      "description": "quando vou usar aparece isso (imagens enviadas: Captura de Tela (9).png, Captura de Tela (10).png)",
+      "platform": "importação base raiox ativa 18.09.2025",
+      "person": "Guilherme Galli Antonio",
+      "raw_date": "2026-03-24T13:24:00",
+      "department_tag": "4 - Suporte Técnico"
     }
   ]
 }
