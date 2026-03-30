@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun:*)",
+      "mcp__plugin_context-mode_context-mode__ctx_doctor",
+      "mcp__plugin_context-mode_context-mode__ctx_execute",
+      "Bash(find 'C:\\\\Users\\\\vinih\\\\OneDrive\\\\Área de Trabalho\\\\teste' -name .* -o -name *)",
+      "Bash(pip install:*)",
+      "Bash(\"C:/Users/vinih/AppData/Local/Programs/Python/Python310/python.exe\" -m pip install supabase)",
+      "Bash(claude mcp:*)",
+      "mcp__n8n-native__search_workflows"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+    "mcpServers": {
+      "n8n-mcp": {
+        "command": "bash",
+        "args": ["C:/Users/vinih/OneDrive/Documents/GitHub/Automation-IA/skills/n8n-mcp/start.sh"],
+        "env": {
+          "MCP_MODE": "stdio",
+          "LOG_LEVEL": "error",
+          "DISABLE_CONSOLE_OUTPUT": "true"
+        }
+      }
+    }
+  }
